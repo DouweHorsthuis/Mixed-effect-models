@@ -7,7 +7,7 @@
 
 <h3 align="center">Mixed effect models</h3>
 
-<h4 align="center">Generalized script to run mixed effect models in R-studio on EEG data </h4>
+<h4 align="center">Generalized script to run mixed effect models in R-studio on EEG data</h4>
 
 
 
