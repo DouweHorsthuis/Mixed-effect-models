@@ -1,0 +1,85 @@
+---
+title: "Mixed Models"
+author: "Douwe John Horsthuis"
+date: "`r Sys.Date()`"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+![](image/logo.jpeg)
+
+# Mixed Models in R
+
+*As coded and explained and created by [Ana Francisco](https://www.cognitiveneurolab.com/dr-ana-a-francisco) and written down and edited by [Douwe Horsthuis](https://github.com/DouweHorsthuis)*
+
+## What are mixed models and why use them
+
+## How to use this R code to create your own mixed models
+
+## The actual code explained
+
+Here we are using a generalized version of the code that you can addapt to use for your own project.
+
+### Loading libraries
+
+You'll need at least these libraries to do the basics, we are also cleaning the enviroment (in case you want to re-run it from the start) and prefenting R from using scientific notations.
+
+```{r loading libraries and basic starting, message=FALSE, warning=FALSE}
+library(lme4)#library for mixed models 
+library(lmerTest)#library for P values
+library(ggplot2)#library for plotting
+library(doBy)#for summaries
+library(dplyr)#for many basics 
+rm(list=ls())#cleans environment
+options(scipen=999)#no scientific notations
+
+```
+
+### Loading data and seeing if it makes sense
+
+We need to load data from a .csv file, or a .text file. We haven't tested, but `library(R.matlab)` and `readMat("filename")` to do the same with a MATLAB file. This file should have a couple of things:
+
+1.  Dependent variable; such as amplitude from trial by trial data from individual subjects
+
+    -   This should be a single value per trial
+
+    -   The more factors you want to include in your model, the more trials you need per participant. If you have too few the model won't complete.
+
+2.  Fixed factor; such as group, this is different between some people but not all
+
+3.  Random factor; such as an ID or something that identifies the individual who's data is used, since we know that the data of each individual is always going to be different from the next.
+
+```{r loading and checking data, echo=TRUE, message=FALSE, warning=FALSE}
+#fill out these 3 variables that will be different depending on your data
+load_path="C:/Users/douwe/Dropbox (EinsteinMed)/Ana and Douwe - work/resting state 2022/microstates/R/"
+data_name="five groups - same solution.csv"
+amount_trial= 200 #how many trials do you want to use
+
+exr=read.csv(paste(load_path,data_name,sep=""), header=TRUE)#imports data, header=TRUE so we keep names of columns
+#re-defines column names
+#colnames(exr)=c("a", "b","c","d")  #give the correct name to each of your collumns
+
+#creates factors
+exr$subj=as.factor(exr$id)
+exr$group <- factor (exr$group, levels = c(1:4), labels = c("b1", "b2", "b3", "b4"))
+
+#checks
+sort(unique(exr$a))
+length(unique(exr$a))
+sort(unique(exr$b))
+sort(unique(exr$c))
+str(exr)
+
+#creates summary-mean and standard deviation
+summaryBy(d ~ b, data=exr, FUN=c(length,mean,sd))
+
+#randomly selects x amount trials per subject 
+reducedexr <- exr %>% group_by(a) %>% sample_n(size = amount_trial)
+```
