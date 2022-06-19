@@ -52,34 +52,157 @@ We need to load data from a .csv file, or a .text file. We haven't tested, but `
 
     -   The more factors you want to include in your model, the more trials you need per participant. If you have too few the model won't complete.
 
-2.  Fixed factor; such as group, this is different between some people but not all
+2.  Fixed factor; such as
 
-3.  Random factor; such as an ID or something that identifies the individual who's data is used, since we know that the data of each individual is always going to be different from the next.
+    -   group, this is different between some people but not all
+
+    -   conditions
+
+3.  Random factor; such as
+
+    -   ID or something that identifies the individual who's data is used, since we know that the data of each individual is always going to be different from the next.
+
+    -   Trial number
+
+## Loading and cleaning the data
 
 ```{r loading and checking data, echo=TRUE, message=FALSE, warning=FALSE}
 #fill out these 3 variables that will be different depending on your data
-load_path="C:/Users/douwe/Dropbox (EinsteinMed)/Ana and Douwe - work/resting state 2022/microstates/R/"
-data_name="five groups - same solution.csv"
+load_path="C:/Users/douwe/OneDrive/Documents/Github/Mixed-effect-models/data/"
+data_name="p2.txt"
 amount_trial= 200 #how many trials do you want to use
 
-exr=read.csv(paste(load_path,data_name,sep=""), header=TRUE)#imports data, header=TRUE so we keep names of columns
+dataset_full=read.table(paste(load_path,data_name,sep=""), header=TRUE)#imports data, header=TRUE so we keep names of columns
+```
+
+```{r cleaning data}
 #re-defines column names
-#colnames(exr)=c("a", "b","c","d")  #give the correct name to each of your collumns
+colnames(dataset_full)=c("subjects","group", "group2","condition", "trial","o1","oz","o2","avg")  #give the correct name to each of your columns
 
 #creates factors
-exr$subj=as.factor(exr$id)
-exr$group <- factor (exr$group, levels = c(1:4), labels = c("b1", "b2", "b3", "b4"))
+dataset_full$subjects=as.factor(dataset_full$subjects)
+dataset_full$trial=as.factor(dataset_full$trial)
+
+dataset_full$group2 <- factor (dataset_full$group2, levels = c(1:5), labels = c("CT 22q", "22q-", "22q+", "CT SZ", "SZ"))
+dataset_full$condition <- factor (dataset_full$condition, levels = c(1:5), labels = c("145", "245", "495", "995", "2495"))
 
 #checks
-sort(unique(exr$a))
-length(unique(exr$a))
-sort(unique(exr$b))
-sort(unique(exr$c))
-str(exr)
+#checks
+length(unique(dataset_full$subjects))
+sort(unique(dataset_full$group2))
+sort(unique(dataset_full$condition))
+str(dataset_full)
+
+# getting rid of data that is not needed for example
+dataset<- subset(dataset_full, select = -c(group, o1, oz, o2))
+dataset<- subset(dataset, group2 != "CT 22q" &  group2 != "22q-" &  group2 != "22q+" )
 
 #creates summary-mean and standard deviation
-summaryBy(d ~ b, data=exr, FUN=c(length,mean,sd))
+summaryBy(avg ~ subj, data=dataset, FUN=c(length,mean,sd))
 
 #randomly selects x amount trials per subject 
-reducedexr <- exr %>% group_by(a) %>% sample_n(size = amount_trial)
+reduceddataset <- dataset %>% group_by(subjects) %>% sample_n(size = amount_trial)
 ```
+
+## Plotting data
+
+Here we are using ggplot to plot the data. This is an example dataset. This is Go-No-Go data from the IAPS paradigm, where we compare controls and people with schizophrenia. We have different conditions (isi between stimulation).
+
+```{r}
+vgp2Plot <- ggplot(reduceddataset, aes(x = group2, y = avg, color=group2)) 
+vgp2Plot <- vgp2Plot + theme(legend.key.size = unit(1, "cm"))
+vgp2Plot <- vgp2Plot + theme(legend.key.size = unit(1, "cm"))
+vgp2Plot <- vgp2Plot + geom_violin() #position = position_nudge(x = .2, y = 0), adjust=1, lwd=1.2, lty=3
+vgp2Plot <- vgp2Plot + geom_boxplot(width=0.1, alpha=1, outlier.shape = NA, lwd=1, position=position_dodge(0.5))
+vgp2Plot <- vgp2Plot + geom_jitter(width=0.15, alpha = 0.01)
+vgp2Plot <- vgp2Plot + scale_color_manual(values=c("snow4", "aquamarine3", "pink", "orange", "purple"))  
+vgp2Plot <- vgp2Plot + labs(y = expression(paste("amplitude (",mu,"V)")), x="groups")
+vgp2Plot <- vgp2Plot + theme_minimal()
+vgp2Plot <- vgp2Plot + theme(axis.line = element_line(colour = "grey"),
+                             panel.grid.major = element_blank(),
+                             panel.grid.minor = element_blank(),
+                             panel.border = element_blank(),
+                             panel.background = element_blank())
+vgp2Plot <- vgp2Plot + theme(legend.position = "none")
+vgp2Plot <- vgp2Plot + theme(text = element_text(family="sans", size=20))
+vgp2Plot <- vgp2Plot + scale_y_continuous(limits = c(-30,30))
+vgp2Plot
+```
+
+## Creating subsets for the model
+
+A mixed effects model should be ran on factors we want to compare with each other, in this case the amplitude for the p2 between the 4 groups. In the case of this example, the 22q group is age matched to their controls, and the sz group has their own. Due to the age difference we should not compare between these groups. So we also need to create subgroups. We also want to be able to look only at a specific condition, so we also separate per conditions
+
+```{r creating subgroups}
+vg145_sz <- subset(reduceddataset, condition=="145")
+vg245_sz <- subset(reduceddataset, condition=="245")
+vg495_sz <- subset(reduceddataset, condition=="495")
+vg995_sz <- subset(reduceddataset, condition=="995")
+vg2495_sz <- subset(reduceddataset, condition=="2495")
+
+```
+
+## Mixed model
+
+In this example, the depended variable is amplitude, group is a fixed factor, subjects and trial are random factors. We run 6 models, the first 5 look at amplitude by group, the last one also looks at group and condition, because of the \* between group and condition, it will also look for interactions between the two.
+
+```{r mixed models 1.01, echo=TRUE, message=FALSE, warning=FALSE}
+model1.01 = lmer(avg~group2+(1|subjects)+(1|trial), data = vg145_sz, REML=FALSE)
+summary(model1.01)
+```
+
+We see that the difference **is not significant** for this condition between the groups, we also see that the random effects are not significant
+
+```{r mixed models 1.02, echo=TRUE, message=FALSE, warning=FALSE}
+model1.02 = lmer(avg~group2+(1|subjects)+(1|trial), data = vg245_sz, REML=FALSE)
+summary(model1.02)
+
+```
+
+We see that the difference **is significant** for this condition between the groups, we also see that the random effects are not significant
+
+```{r mixed models 1.03, echo=TRUE, message=FALSE, warning=FALSE}
+model1.03 = lmer(avg~group2+(1|subjects)+(1|trial), data = vg495_sz, REML=FALSE)
+summary(model1.03)
+
+```
+
+We see that the difference **is significant** for this condition between the groups, we also see that the random effects are not significant
+
+```{r mixed models 1.04, echo=TRUE, message=FALSE, warning=FALSE}
+model1.04 = lmer(avg~group2+(1|subjects)+(1|trial), data = vg995_sz, REML=FALSE)
+summary(model1.04)
+
+```
+
+We see that the difference **is significant** for this condition between the groups, we also see that the random effects are not significant
+
+```{r mixed models 1.05, echo=TRUE, message=FALSE, warning=FALSE}
+model1.05 = lmer(avg~group2+(1|subjects)+(1|trial), data = vg2495_sz, REML=FALSE)
+summary(model1.05)
+
+```
+
+We see that the difference **is significant** for this condition between the groups, we also see that the random effects are not significant
+
+```{r mixed models 1.06, echo=TRUE, message=FALSE, warning=FALSE}
+model1.06 = lmer(avg~group2*condition+(1|subjects)+(1|trial), data = reduceddataset, REML=FALSE)
+summary(model1.06)
+
+```
+
+We see several things here
+
+1.  Overall group is not significant
+
+2.  condition 245 495 995 and 2495 are significant compared to condition 145.
+
+3.  The interactions:
+
+    1.   sz&condition 245 with controls & 145 is not significant
+
+    2.   sz&condition 495 with controls & 145 is not significant
+
+    3.  sz&condition 995 with controls & 145 is significant
+
+    4.  sz&condition 2495 with controls & 145 is significant
