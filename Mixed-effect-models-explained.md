@@ -1,7 +1,7 @@
 Mixed Models
 ================
 Douwe John Horsthuis
-2022-06-19
+2022-06-26
 
 ![](image/logo.jpeg)
 
@@ -12,20 +12,47 @@ Francisco](https://www.cognitiveneurolab.com/dr-ana-a-francisco) and
 written down and edited by [Douwe
 Horsthuis](https://github.com/DouweHorsthuis)*
 
+What will you find in this repo:
+
+1.  [What are mixed models and why use
+    them](#what-are-mixed-models-and-why-use-them)
+
+2.  [How to use this R code to create your own mixed
+    models](#how-to-use-this-r-code-to-create-your-own-mixed-models)
+
+    1.  [R libraries](#loading-r-libraries)
+
+    2.  [What do you need to define](#what-do-you-need-to-define)
+
+    3.  [Loading and cleaning the data](#loading-and-cleaning-the-data)
+
+    4.  [Plotting data](#plotting-data)
+
+    5.  [Creating subsets for the
+        model](#creating-subsets-for-the-model)
+
+    6.  [Mixed model](mixed-model)
+
 ## What are mixed models and why use them
 
 ## How to use this R code to create your own mixed models
 
 ## The actual code explained
 
-Here we are using a generalized version of the code that you can addapt
-to use for your own project.
+Here we are using a adaptable version of the code that you need adapt to
+use for your own project.
 
-### Loading libraries
+### Loading R libraries
 
-You’ll need at least these libraries to do the basics, we are also
-cleaning the enviroment (in case you want to re-run it from the start)
-and prefenting R from using scientific notations.
+For R code to work, you need to re-load libraries every time you open an
+R project. If it’s the first time you load them, you’ll need to install
+them. You can do this by running the line
+`install.package("thenameofthelibrary")`.
+
+To use the following script, you’ll need at least these libraries to do
+the basics, we are also cleaning the environment (in case you want to
+re-run it from the start) and preventing R from using scientific
+notations.
 
 ``` r
 library(lme4)#library for mixed models 
@@ -37,7 +64,7 @@ rm(list=ls())#cleans environment
 options(scipen=999)#no scientific notations
 ```
 
-### Loading data and seeing if it makes sense
+### What do you need to define
 
 We need to load data from a .csv file, or a .text file. We haven’t
 tested, but `library(R.matlab)` and `readMat("filename")` to do the same
@@ -169,7 +196,7 @@ vgp2Plot <- vgp2Plot + scale_y_continuous(limits = c(-30,30))
 vgp2Plot
 ```
 
-![](image/unnamed-chunk-1-1.png)<!-- -->
+![](Mixed-effect-models-explained_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
 
 ## Creating subsets for the model
 
@@ -208,29 +235,31 @@ summary(model1.01)
     ##    Data: vg145_sz
     ## 
     ##      AIC      BIC   logLik deviance df.resid 
-    ##  14616.7  14645.3  -7303.4  14606.7     2243 
+    ##  14493.0  14521.6  -7241.5  14483.0     2246 
     ## 
     ## Scaled residuals: 
     ##     Min      1Q  Median      3Q     Max 
-    ## -5.6356 -0.5576 -0.0074  0.5635  4.8368 
+    ## -4.7915 -0.5872 -0.0230  0.5469  4.6608 
     ## 
     ## Random effects:
     ##  Groups   Name        Variance Std.Dev.
-    ##  trial    (Intercept)  0.07418 0.2724  
-    ##  subjects (Intercept)  7.66731 2.7690  
-    ##  Residual             36.70090 6.0581  
-    ## Number of obs: 2248, groups:  trial, 211; subjects, 55
+    ##  trial    (Intercept)  0.000   0.000   
+    ##  subjects (Intercept)  7.736   2.781   
+    ##  Residual             34.453   5.870   
+    ## Number of obs: 2251, groups:  trial, 219; subjects, 55
     ## 
     ## Fixed effects:
     ##             Estimate Std. Error      df t value Pr(>|t|)    
-    ## (Intercept)   2.1299     0.5178 55.4243   4.113  0.00013 ***
-    ## group2SZ     -1.3448     0.8009 55.5300  -1.679  0.09875 .  
+    ## (Intercept)   2.0325     0.5182 54.6804   3.922 0.000247 ***
+    ## group2SZ     -1.7273     0.8011 54.6057  -2.156 0.035494 *  
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
     ## Correlation of Fixed Effects:
     ##          (Intr)
-    ## group2SZ -0.646
+    ## group2SZ -0.647
+    ## optimizer (nloptwrap) convergence code: 0 (OK)
+    ## boundary (singular) fit: see help('isSingular')
 
 We see that the difference **is not significant** for this condition
 between the groups, we also see that the random effects are not
@@ -247,29 +276,31 @@ summary(model1.02)
     ##    Data: vg245_sz
     ## 
     ##      AIC      BIC   logLik deviance df.resid 
-    ##  14549.9  14578.4  -7270.0  14539.9     2194 
+    ##  14434.0  14462.5  -7212.0  14424.0     2192 
     ## 
     ## Scaled residuals: 
     ##     Min      1Q  Median      3Q     Max 
-    ## -8.2015 -0.5380 -0.0159  0.5167  6.5630 
+    ## -4.5486 -0.5531 -0.0115  0.5251  5.8451 
     ## 
     ## Random effects:
     ##  Groups   Name        Variance Std.Dev.
-    ##  trial    (Intercept)  0.3781  0.6149  
-    ##  subjects (Intercept)  6.7794  2.6037  
-    ##  Residual             41.0593  6.4078  
-    ## Number of obs: 2199, groups:  trial, 217; subjects, 55
+    ##  trial    (Intercept)  0.000   0.000   
+    ##  subjects (Intercept)  7.607   2.758   
+    ##  Residual             39.387   6.276   
+    ## Number of obs: 2197, groups:  trial, 217; subjects, 55
     ## 
     ## Fixed effects:
     ##             Estimate Std. Error      df t value      Pr(>|t|)    
-    ## (Intercept)   3.3867     0.4958 55.3544   6.830 0.00000000696 ***
-    ## group2SZ     -1.6598     0.7651 54.9108  -2.169        0.0344 *  
+    ## (Intercept)   3.6047     0.5189 54.7077   6.946 0.00000000474 ***
+    ## group2SZ     -1.4606     0.8020 54.5721  -1.821        0.0741 .  
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
     ## Correlation of Fixed Effects:
     ##          (Intr)
-    ## group2SZ -0.643
+    ## group2SZ -0.647
+    ## optimizer (nloptwrap) convergence code: 0 (OK)
+    ## boundary (singular) fit: see help('isSingular')
 
 We see that the difference **is significant** for this condition between
 the groups, we also see that the random effects are not significant
@@ -285,31 +316,29 @@ summary(model1.03)
     ##    Data: vg495_sz
     ## 
     ##      AIC      BIC   logLik deviance df.resid 
-    ##  14449.3  14477.8  -7219.7  14439.3     2177 
+    ##  14637.8  14666.3  -7313.9  14627.8     2209 
     ## 
     ## Scaled residuals: 
     ##     Min      1Q  Median      3Q     Max 
-    ## -4.6707 -0.5665 -0.0238  0.5493  5.0120 
+    ## -4.6084 -0.5296 -0.0218  0.5354  5.0000 
     ## 
     ## Random effects:
     ##  Groups   Name        Variance Std.Dev.
-    ##  trial    (Intercept)  0.000   0.000   
-    ##  subjects (Intercept)  5.753   2.398   
-    ##  Residual             41.795   6.465   
-    ## Number of obs: 2182, groups:  trial, 212; subjects, 55
+    ##  trial    (Intercept)  0.1052  0.3244  
+    ##  subjects (Intercept)  6.0325  2.4561  
+    ##  Residual             41.2136  6.4198  
+    ## Number of obs: 2214, groups:  trial, 211; subjects, 55
     ## 
     ## Fixed effects:
-    ##             Estimate Std. Error      df t value        Pr(>|t|)    
-    ## (Intercept)   3.8412     0.4624 54.2398   8.307 0.0000000000306 ***
-    ## group2SZ     -1.5891     0.7138 53.8589  -2.226          0.0302 *  
+    ##             Estimate Std. Error      df t value      Pr(>|t|)    
+    ## (Intercept)   3.7655     0.4713 55.0745   7.989 0.00000000009 ***
+    ## group2SZ     -1.7218     0.7264 54.5621  -2.370        0.0213 *  
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
     ## Correlation of Fixed Effects:
     ##          (Intr)
-    ## group2SZ -0.648
-    ## optimizer (nloptwrap) convergence code: 0 (OK)
-    ## boundary (singular) fit: see help('isSingular')
+    ## group2SZ -0.647
 
 We see that the difference **is significant** for this condition between
 the groups, we also see that the random effects are not significant
@@ -325,29 +354,29 @@ summary(model1.04)
     ##    Data: vg995_sz
     ## 
     ##      AIC      BIC   logLik deviance df.resid 
-    ##  14201.3  14229.7  -7095.7  14191.3     2147 
+    ##  13814.0  13842.2  -6902.0  13804.0     2076 
     ## 
     ## Scaled residuals: 
     ##     Min      1Q  Median      3Q     Max 
-    ## -5.9409 -0.5236 -0.0164  0.5197  8.1913 
+    ## -4.9336 -0.5639  0.0109  0.5603  5.5690 
     ## 
     ## Random effects:
     ##  Groups   Name        Variance Std.Dev.
     ##  trial    (Intercept)  0.000   0.000   
-    ##  subjects (Intercept)  7.032   2.652   
-    ##  Residual             40.624   6.374   
-    ## Number of obs: 2152, groups:  trial, 197; subjects, 55
+    ##  subjects (Intercept)  7.584   2.754   
+    ##  Residual             42.153   6.493   
+    ## Number of obs: 2081, groups:  trial, 198; subjects, 55
     ## 
     ## Fixed effects:
-    ##             Estimate Std. Error      df t value       Pr(>|t|)    
-    ## (Intercept)   3.9819     0.5030 55.2337   7.916 0.000000000116 ***
-    ## group2SZ     -2.4543     0.7772 55.0540  -3.158        0.00258 ** 
+    ##             Estimate Std. Error      df t value      Pr(>|t|)    
+    ## (Intercept)   3.7635     0.5208 54.7431   7.226 0.00000000165 ***
+    ## group2SZ     -2.1688     0.8075 55.2996  -2.686       0.00953 ** 
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
     ## Correlation of Fixed Effects:
     ##          (Intr)
-    ## group2SZ -0.647
+    ## group2SZ -0.645
     ## optimizer (nloptwrap) convergence code: 0 (OK)
     ## boundary (singular) fit: see help('isSingular')
 
@@ -365,31 +394,29 @@ summary(model1.05)
     ##    Data: vg2495_sz
     ## 
     ##      AIC      BIC   logLik deviance df.resid 
-    ##  14696.6  14725.1  -7343.3  14686.6     2214 
+    ##  15093.8  15122.4  -7541.9  15083.8     2252 
     ## 
     ## Scaled residuals: 
     ##     Min      1Q  Median      3Q     Max 
-    ## -6.6642 -0.5704 -0.0128  0.5464  4.4358 
+    ## -5.6522 -0.5881 -0.0256  0.5429  4.8995 
     ## 
     ## Random effects:
     ##  Groups   Name        Variance Std.Dev.
-    ##  trial    (Intercept)  0.000   0.000   
-    ##  subjects (Intercept)  7.297   2.701   
-    ##  Residual             41.641   6.453   
-    ## Number of obs: 2219, groups:  trial, 229; subjects, 55
+    ##  trial    (Intercept)  0.02279 0.151   
+    ##  subjects (Intercept)  6.39371 2.529   
+    ##  Residual             44.60604 6.679   
+    ## Number of obs: 2257, groups:  trial, 222; subjects, 55
     ## 
     ## Fixed effects:
     ##             Estimate Std. Error      df t value Pr(>|t|)    
-    ## (Intercept)   2.1196     0.5107 55.3016   4.151 0.000115 ***
-    ## group2SZ     -1.7644     0.7895 55.2339  -2.235 0.029484 *  
+    ## (Intercept)   1.9950     0.4842 55.6256   4.121 0.000127 ***
+    ## group2SZ     -1.5221     0.7485 55.7109  -2.034 0.046768 *  
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
     ## Correlation of Fixed Effects:
     ##          (Intr)
     ## group2SZ -0.647
-    ## optimizer (nloptwrap) convergence code: 0 (OK)
-    ## boundary (singular) fit: see help('isSingular')
 
 We see that the difference **is significant** for this condition between
 the groups, we also see that the random effects are not significant
@@ -405,56 +432,56 @@ summary(model1.06)
     ##    Data: reduceddataset
     ## 
     ##      AIC      BIC   logLik deviance df.resid 
-    ##  72260.5  72355.5 -36117.2  72234.5    10987 
+    ##  72355.2  72450.2 -36164.6  72329.2    10987 
     ## 
     ## Scaled residuals: 
     ##     Min      1Q  Median      3Q     Max 
-    ## -8.4506 -0.5590 -0.0127  0.5468  8.1658 
+    ## -5.9049 -0.5623 -0.0063  0.5581  6.0532 
     ## 
     ## Random effects:
     ##  Groups   Name        Variance Std.Dev.
-    ##  trial    (Intercept)  0.1189  0.3448  
-    ##  subjects (Intercept)  6.4501  2.5397  
-    ##  Residual             40.8046  6.3879  
-    ## Number of obs: 11000, groups:  trial, 257; subjects, 55
+    ##  trial    (Intercept)  0.1582  0.3978  
+    ##  subjects (Intercept)  6.0902  2.4678  
+    ##  Residual             41.1384  6.4139  
+    ## Number of obs: 11000, groups:  trial, 255; subjects, 55
     ## 
     ## Fixed effects:
     ##                           Estimate  Std. Error          df t value
-    ## (Intercept)                2.15340     0.48287    69.12631   4.460
-    ## group2SZ                  -1.36797     0.74655    69.07286  -1.832
-    ## condition245               1.21839     0.25006 10916.63795   4.873
-    ## condition495               1.66715     0.25288 10927.40976   6.593
-    ## condition995               1.79299     0.25317 10921.18433   7.082
-    ## condition2495             -0.06514     0.25068 10927.03913  -0.260
-    ## group2SZ:condition245     -0.28348     0.39079 10930.13509  -0.725
-    ## group2SZ:condition495     -0.21347     0.39019 10922.83647  -0.547
-    ## group2SZ:condition995     -1.07181     0.39185 10918.16726  -2.735
-    ## group2SZ:condition2495    -0.32087     0.38877 10925.21238  -0.825
+    ## (Intercept)                2.03187     0.47208    70.53284   4.304
+    ## group2SZ                  -1.70838     0.72839    69.91731  -2.345
+    ## condition245               1.58358     0.25380 10921.28847   6.239
+    ## condition495               1.75528     0.25407 10926.11569   6.909
+    ## condition995               1.72269     0.25480 10919.97383   6.761
+    ## condition2495             -0.03276     0.25142 10921.49449  -0.130
+    ## group2SZ:condition245      0.17997     0.39098 10935.13710   0.460
+    ## group2SZ:condition495     -0.05525     0.38963 10932.33222  -0.142
+    ## group2SZ:condition995     -0.50184     0.39755 10917.69930  -1.262
+    ## group2SZ:condition2495     0.16937     0.38867 10940.86641   0.436
     ##                                Pr(>|t|)    
-    ## (Intercept)            0.00003098650128 ***
-    ## group2SZ                        0.07121 .  
-    ## condition245           0.00000111741936 ***
-    ## condition495           0.00000000004520 ***
-    ## condition995           0.00000000000151 ***
-    ## condition2495                   0.79500    
-    ## group2SZ:condition245           0.46823    
-    ## group2SZ:condition495           0.58433    
-    ## group2SZ:condition995           0.00624 ** 
-    ## group2SZ:condition2495          0.40919    
+    ## (Intercept)            0.00005307318583 ***
+    ## group2SZ                         0.0218 *  
+    ## condition245           0.00000000045559 ***
+    ## condition495           0.00000000000516 ***
+    ## condition995           0.00000000001440 ***
+    ## condition2495                    0.8963    
+    ## group2SZ:condition245            0.6453    
+    ## group2SZ:condition495            0.8872    
+    ## group2SZ:condition995            0.2069    
+    ## group2SZ:condition2495           0.6630    
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
     ## Correlation of Fixed Effects:
     ##             (Intr) grp2SZ cnd245 cnd495 cnd995 cn2495 g2SZ:245 g2SZ:4 g2SZ:9
-    ## group2SZ    -0.645                                                          
-    ## conditin245 -0.257  0.166                                                   
-    ## conditin495 -0.254  0.164  0.491                                            
-    ## conditin995 -0.254  0.164  0.490  0.485                                     
-    ## conditn2495 -0.256  0.166  0.494  0.488  0.488                              
-    ## grp2SZ:c245  0.164 -0.259 -0.640 -0.314 -0.314 -0.316                       
-    ## grp2SZ:c495  0.165 -0.259 -0.318 -0.648 -0.314 -0.316  0.495                
-    ## grp2SZ:c995  0.164 -0.258 -0.317 -0.313 -0.646 -0.315  0.493    0.493       
-    ## grp2SZ:2495  0.165 -0.259 -0.319 -0.315 -0.315 -0.645  0.496    0.496  0.494
+    ## group2SZ    -0.646                                                          
+    ## conditin245 -0.265  0.172                                                   
+    ## conditin495 -0.265  0.172  0.493                                            
+    ## conditin995 -0.264  0.171  0.491  0.490                                     
+    ## conditn2495 -0.268  0.173  0.498  0.497  0.495                              
+    ## grp2SZ:c245  0.172 -0.265 -0.649 -0.320 -0.319 -0.324                       
+    ## grp2SZ:c495  0.173 -0.266 -0.321 -0.652 -0.320 -0.324  0.496                
+    ## grp2SZ:c995  0.169 -0.261 -0.315 -0.314 -0.641 -0.317  0.485    0.487       
+    ## grp2SZ:2495  0.173 -0.267 -0.322 -0.322 -0.320 -0.647  0.497    0.499  0.488
 
 We see several things here
 

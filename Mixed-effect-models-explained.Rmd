@@ -19,17 +19,37 @@ knitr::opts_chunk$set(
 
 *As coded and explained and created by [Ana Francisco](https://www.cognitiveneurolab.com/dr-ana-a-francisco) and written down and edited by [Douwe Horsthuis](https://github.com/DouweHorsthuis)*
 
+What will you find in this repo:
+
+1.  [What are mixed models and why use them](#what-are-mixed-models-and-why-use-them)
+
+2.  [How to use this R code to create your own mixed models](#how-to-use-this-r-code-to-create-your-own-mixed-models)
+
+    1.  [R libraries](#loading-r-libraries)
+
+    2.  [What do you need to define](#what-do-you-need-to-define)
+
+    3.  [Loading and cleaning the data](#loading-and-cleaning-the-data)
+
+    4.  [Plotting data](#plotting-data)
+
+    5.  [Creating subsets for the model](#creating-subsets-for-the-model)
+
+    6.  [Mixed model](mixed-model)
+
 ## What are mixed models and why use them
 
 ## How to use this R code to create your own mixed models
 
 ## The actual code explained
 
-Here we are using a generalized version of the code that you can addapt to use for your own project.
+Here we are using a adaptable version of the code that you need adapt to use for your own project.
 
-### Loading libraries
+### Loading R libraries
 
-You'll need at least these libraries to do the basics, we are also cleaning the enviroment (in case you want to re-run it from the start) and prefenting R from using scientific notations.
+For R code to work, you need to re-load libraries every time you open an R project. If it's the first time you load them, you'll need to install them. You can do this by running the line `install.package("thenameofthelibrary")`.
+
+To use the following script, you'll need at least these libraries to do the basics, we are also cleaning the environment (in case you want to re-run it from the start) and preventing R from using scientific notations.
 
 ```{r loading libraries and basic starting, message=FALSE, warning=FALSE}
 library(lme4)#library for mixed models 
@@ -42,7 +62,7 @@ options(scipen=999)#no scientific notations
 
 ```
 
-### Loading data and seeing if it makes sense
+### What do you need to define
 
 We need to load data from a .csv file, or a .text file. We haven't tested, but `library(R.matlab)` and `readMat("filename")` to do the same with a MATLAB file. This file should have a couple of things:
 
@@ -199,9 +219,9 @@ We see several things here
 
 3.  The interactions:
 
-    1.   sz&condition 245 with controls & 145 is not significant
+    1.  sz&condition 245 with controls & 145 is not significant
 
-    2.   sz&condition 495 with controls & 145 is not significant
+    2.  sz&condition 495 with controls & 145 is not significant
 
     3.  sz&condition 995 with controls & 145 is significant
 
