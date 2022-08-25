@@ -1,24 +1,18 @@
-Mixed Models
-================
-Douwe John Horsthuis
-2022-06-26
+# Mixed Models
+
+Douwe John Horsthuis 2022-06-26
 
 ![](image/logo.jpeg)
 
 # Mixed Models in R
 
-*As coded and explained and created by [Ana
-Francisco](https://www.cognitiveneurolab.com/dr-ana-a-francisco) and
-written down and edited by [Douwe
-Horsthuis](https://github.com/DouweHorsthuis)*
+*As coded and explained and created by [Ana Francisco](https://www.cognitiveneurolab.com/dr-ana-a-francisco) and written down and edited by [Douwe Horsthuis](https://github.com/DouweHorsthuis)*
 
 What will you find in this repo:
 
-1.  [What are mixed models and why use
-    them](#what-are-mixed-models-and-why-use-them)
+1.  [What are mixed models and why use them](#what-are-mixed-models-and-why-use-them)
 
-2.  [How to use this R code to create your own mixed
-    models](#how-to-use-this-r-code-to-create-your-own-mixed-models)
+2.  [How to use this R code to create your own mixed models](#how-to-use-this-r-code-to-create-your-own-mixed-models)
 
     1.  [R libraries](#loading-r-libraries)
 
@@ -28,31 +22,23 @@ What will you find in this repo:
 
     4.  [Plotting data](#plotting-data)
 
-    5.  [Creating subsets for the
-        model](#creating-subsets-for-the-model)
+    5.  [Creating subsets for the model](#creating-subsets-for-the-model)
 
     6.  [Mixed model](mixed-model)
 
-## What are mixed models and why use them
+## What are mixed models and why use them {#what-are-mixed-models-and-why-use-them}
 
-## How to use this R code to create your own mixed models
+## How to use this R code to create your own mixed models {#how-to-use-this-r-code-to-create-your-own-mixed-models}
 
 ## The actual code explained
 
-Here we are using a adaptable version of the code that you need adapt to
-use for your own project.
+Here we are using a adaptable version of the code that you need adapt to use for your own project.
 
-### Loading R libraries
+### Loading R libraries {#loading-r-libraries}
 
-For R code to work, you need to re-load libraries every time you open an
-R project. If it’s the first time you load them, you’ll need to install
-them. You can do this by running the line
-`install.package("thenameofthelibrary")`.
+For R code to work, you need to re-load libraries every time you open an R project. If it's the first time you load them, you'll need to install them. You can do this by running the line `install.package("thenameofthelibrary")`.
 
-To use the following script, you’ll need at least these libraries to do
-the basics, we are also cleaning the environment (in case you want to
-re-run it from the start) and preventing R from using scientific
-notations.
+To use the following script, you'll need at least these libraries to do the basics, we are also cleaning the environment (in case you want to re-run it from the start) and preventing R from using scientific notations.
 
 ``` r
 library(lme4)#library for mixed models 
@@ -64,20 +50,15 @@ rm(list=ls())#cleans environment
 options(scipen=999)#no scientific notations
 ```
 
-### What do you need to define
+### What do you need to define {#what-do-you-need-to-define}
 
-We need to load data from a .csv file, or a .text file. We haven’t
-tested, but `library(R.matlab)` and `readMat("filename")` to do the same
-with a MATLAB file. This file should have a couple of things:
+We need to load data from a .csv file, or a .text file. We haven't tested, but `library(R.matlab)` and `readMat("filename")` to do the same with a MATLAB file. This file should have a couple of things:
 
-1.  Dependent variable; such as amplitude from trial by trial data from
-    individual subjects
+1.  Dependent variable; such as amplitude from trial by trial data from individual subjects
 
     -   This should be a single value per trial
 
-    -   The more factors you want to include in your model, the more
-        trials you need per participant. If you have too few the model
-        won’t complete.
+    -   The more factors you want to include in your model, the more trials you need per participant. If you have too few the model won't complete.
 
 2.  Fixed factor; such as
 
@@ -87,13 +68,11 @@ with a MATLAB file. This file should have a couple of things:
 
 3.  Random factor; such as
 
-    -   ID or something that identifies the individual who’s data is
-        used, since we know that the data of each individual is always
-        going to be different from the next.
+    -   ID or something that identifies the individual who's data is used, since we know that the data of each individual is always going to be different from the next.
 
     -   Trial number
 
-## Loading and cleaning the data
+## Loading and cleaning the data {#loading-and-cleaning-the-data}
 
 ``` r
 #fill out these 3 variables that will be different depending on your data
@@ -168,12 +147,9 @@ summaryBy(avg ~ subj, data=dataset, FUN=c(length,mean,sd))
 reduceddataset <- dataset %>% group_by(subjects) %>% sample_n(size = amount_trial)
 ```
 
-## Plotting data
+## Plotting data {#plotting-data}
 
-Here we are using ggplot to plot the data. This is an example dataset.
-This is Go-No-Go data from the IAPS paradigm, where we compare controls
-and people with schizophrenia. We have different conditions (isi between
-stimulation).
+Here we are using ggplot to plot the data. This is an example dataset. This is Go-No-Go data from the IAPS paradigm, where we compare controls and people with schizophrenia. We have different conditions (isi between stimulation).
 
 ``` r
 vgp2Plot <- ggplot(reduceddataset, aes(x = group2, y = avg, color=group2)) 
@@ -198,15 +174,9 @@ vgp2Plot
 
 ![](Mixed-effect-models-explained_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
 
-## Creating subsets for the model
+## Creating subsets for the model {#creating-subsets-for-the-model}
 
-A mixed effects model should be ran on factors we want to compare with
-each other, in this case the amplitude for the p2 between the 4 groups.
-In the case of this example, the 22q group is age matched to their
-controls, and the sz group has their own. Due to the age difference we
-should not compare between these groups. So we also need to create
-subgroups. We also want to be able to look only at a specific condition,
-so we also separate per conditions
+A mixed effects model should be ran on factors we want to compare with each other, in this case the amplitude for the p2 between the 4 groups. In the case of this example, the 22q group is age matched to their controls, and the sz group has their own. Due to the age difference we should not compare between these groups. So we also need to create subgroups. We also want to be able to look only at a specific condition, so we also separate per conditions
 
 ``` r
 vg145_sz <- subset(reduceddataset, condition=="145")
@@ -218,11 +188,7 @@ vg2495_sz <- subset(reduceddataset, condition=="2495")
 
 ## Mixed model
 
-In this example, the depended variable is amplitude, group is a fixed
-factor, subjects and trial are random factors. We run 6 models, the
-first 5 look at amplitude by group, the last one also looks at group and
-condition, because of the \* between group and condition, it will also
-look for interactions between the two.
+In this example, the depended variable is amplitude, group is a fixed factor, subjects and trial are random factors. We run 6 models, the first 5 look at amplitude by group, the last one also looks at group and condition, because of the \* between group and condition, it will also look for interactions between the two.
 
 ``` r
 model1.01 = lmer(avg~group2+(1|subjects)+(1|trial), data = vg145_sz, REML=FALSE)
@@ -261,9 +227,7 @@ summary(model1.01)
     ## optimizer (nloptwrap) convergence code: 0 (OK)
     ## boundary (singular) fit: see help('isSingular')
 
-We see that the difference **is not significant** for this condition
-between the groups, we also see that the random effects are not
-significant
+We see that the difference **is not significant** for this condition between the groups, we also see that the random effects are not significant
 
 ``` r
 model1.02 = lmer(avg~group2+(1|subjects)+(1|trial), data = vg245_sz, REML=FALSE)
@@ -302,8 +266,7 @@ summary(model1.02)
     ## optimizer (nloptwrap) convergence code: 0 (OK)
     ## boundary (singular) fit: see help('isSingular')
 
-We see that the difference **is significant** for this condition between
-the groups, we also see that the random effects are not significant
+We see that the difference **is significant** for this condition between the groups, we also see that the random effects are not significant
 
 ``` r
 model1.03 = lmer(avg~group2+(1|subjects)+(1|trial), data = vg495_sz, REML=FALSE)
@@ -340,8 +303,7 @@ summary(model1.03)
     ##          (Intr)
     ## group2SZ -0.647
 
-We see that the difference **is significant** for this condition between
-the groups, we also see that the random effects are not significant
+We see that the difference **is significant** for this condition between the groups, we also see that the random effects are not significant
 
 ``` r
 model1.04 = lmer(avg~group2+(1|subjects)+(1|trial), data = vg995_sz, REML=FALSE)
@@ -380,8 +342,7 @@ summary(model1.04)
     ## optimizer (nloptwrap) convergence code: 0 (OK)
     ## boundary (singular) fit: see help('isSingular')
 
-We see that the difference **is significant** for this condition between
-the groups, we also see that the random effects are not significant
+We see that the difference **is significant** for this condition between the groups, we also see that the random effects are not significant
 
 ``` r
 model1.05 = lmer(avg~group2+(1|subjects)+(1|trial), data = vg2495_sz, REML=FALSE)
@@ -418,8 +379,7 @@ summary(model1.05)
     ##          (Intr)
     ## group2SZ -0.647
 
-We see that the difference **is significant** for this condition between
-the groups, we also see that the random effects are not significant
+We see that the difference **is significant** for this condition between the groups, we also see that the random effects are not significant
 
 ``` r
 model1.06 = lmer(avg~group2*condition+(1|subjects)+(1|trial), data = reduceddataset, REML=FALSE)
@@ -488,7 +448,8 @@ We see several things here
 1.  Overall group is not significant
 
 2.  condition 245 495 995 and 2495 are significant compared to condition
-    145.
+
+    145. 
 
 3.  The interactions:
 
