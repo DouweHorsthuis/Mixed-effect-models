@@ -1,9 +1,11 @@
 install.packages("x")
 
 #uploads libraries 
-library(x)
-library(y)
-library(z)
+library(lme4)#library for mixed models 
+library(lmerTest)#library for P values
+library(ggplot2)#library for plotting
+library(doBy)#for summaries
+library(dplyr)#for many basics 
 
 #cleans environment
 rm(list=ls())
