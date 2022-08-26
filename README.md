@@ -10,9 +10,7 @@ Douwe John Horsthuis 2022-06-26
 
 What will you find in this repo:
 
-1.  [What are mixed models and why use them](#what-are-mixed-models-and-why-use-them)
-
-2.  [How to use this R code to create your own mixed models](#how-to-use-this-r-code-to-create-your-own-mixed-models)
+-   [How to use this R code to create your own mixed models](#how-to-use-this-r-code-to-create-your-own-mixed-models)
 
     1.  [R libraries](#loading-r-libraries)
 
@@ -26,9 +24,7 @@ What will you find in this repo:
 
     6.  [Mixed model](mixed-model)
 
-## What are mixed models and why use them {#what-are-mixed-models-and-why-use-them}
-
-## How to use this R code to create your own mixed models {#how-to-use-this-r-code-to-create-your-own-mixed-models}
+## How to use this R code to create your own mixed models
 
 ## The actual code explained
 
@@ -449,7 +445,7 @@ We see several things here
 
 2.  condition 245 495 995 and 2495 are significant compared to condition
 
-    145. 
+    1.  
 
 3.  The interactions:
 
